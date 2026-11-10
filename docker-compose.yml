@@ -1,17 +1,73 @@
 
 services:
   app1:
-    # Build App 1
+    build:
+      context: ./app1
+      dockerfile: Dockerfile
+    container_name: message_collector
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    environment:
+      APP_NAME: "Message Collector"
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8000
+      APP_KEY: "${APP1_KEY}"
+      DB_CONNECTION: sqlite
+      SESSION_DRIVER: file
+      CACHE_STORE: file
+      QUEUE_CONNECTION: sync
+      REDIS_CLIENT: predis
+      REDIS_HOST: redis
+      REDIS_PASSWORD: "null"
+      REDIS_PORT: 6379
+      REDIS_PREFIX: ""
+
+    depends_on:
+      redis:
+        condition: service_healthy
 
   app2:
-    # Build App 2
+    build:
+      context: ./app2
+      dockerfile: Dockerfile
+    container_name: dashboard
+    ports:
+      - "8001:80"
+    restart: unless-stopped
+    environment:
+      APP_NAME: "Dashboard"
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8001
+      APP_KEY: "${APP2_KEY}"
+      DB_CONNECTION: sqlite
+      SESSION_DRIVER: file
+      CACHE_STORE: file
+      QUEUE_CONNECTION: sync
+      REDIS_CLIENT: predis
+      REDIS_HOST: redis
+      REDIS_PASSWORD: "null"
+      REDIS_PORT: 6379
+      REDIS_PREFIX: ""
+
+    depends_on:
+      redis:
+        condition: service_healthy
 
   redis:
     image: redis:7
+    container_name: redis
     restart: unless-stopped
     command: redis-server --appendonly yes
     volumes:
       - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
 volumes:
   redis_data:
