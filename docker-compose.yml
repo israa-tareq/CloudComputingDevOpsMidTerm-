@@ -22,7 +22,7 @@ services:
       REDIS_HOST: redis
       REDIS_PASSWORD: "null"
       REDIS_PORT: 6379
-      REDIS_PREFIX: ""
+      REDIS_PREFIX: laravel-database-
 
     depends_on:
       redis:
@@ -50,7 +50,7 @@ services:
       REDIS_HOST: redis
       REDIS_PASSWORD: "null"
       REDIS_PORT: 6379
-      REDIS_PREFIX: ""
+      REDIS_PREFIX: laravel-database-
 
     depends_on:
       redis:
